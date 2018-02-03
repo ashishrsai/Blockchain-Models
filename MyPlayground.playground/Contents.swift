@@ -1,7 +1,6 @@
+import Cocoa
 //: Playground - noun: a place where people can play
 // Building a outline for the actul blockchain server
-
-import Cocoa
 
 //The blockchain is going to contain a class Trasaction which we will use in each block (Each block will contain multiple or single transction)
 class transaction : Codable{
@@ -32,7 +31,7 @@ class blockchainBlock {
     //nonce: this is a value that starts with 0 (may change depending on the application) and is incresed gradually. (Used in Proof of Work)
     var nonce :Int
     //trasnctionInBlock: this is am array of tranaction in our block class (each block can contain multiple transction)
-    var trasactionInBlock :[transaction] = [transaction]()
+    var transactionInBlock :[transaction] = [transaction]()
     //initilaisation of the class
     init() {
         self.nonce = 0
@@ -40,10 +39,14 @@ class blockchainBlock {
     
     // we use 4 main values to calculate hash - 1. Index , 2. Hash of previous block , 3. Nonce , 4. Our transction (This has to be in String) For our blockchain we take all these valeus in String
     var hashingValue :String{
-        let transactionInJSON = try! JSONEncoder().encode(self.trasactionInBlock)
+        let transactionInJSON = try! JSONEncoder().encode(self.transactionInBlock)
         let transactionInString = String(data: transactionInJSON,encoding: .utf8)
         
         return String(self.index) + self.lastHash + String(self.nonce) + transactionInString!
+    }
+    
+    func appendTransaction(transactionInBlock :transaction){
+        self.transactionInBlock.append(transactionInBlock)
     }
     
 }
@@ -54,5 +57,13 @@ class blockChain {
     var blockInBlockChain :[blockchainBlock] = [blockchainBlock]()
     
 }
+
+
+//Testing
+let testBlock = blockchainBlock()
+let transaction1 = transaction(amount: 100,to: "0xaqwsdjabs",from: "0sachakgldqw")
+testBlock.appendTransaction(transactionInBlock: transaction1)
+testBlock.hashingValue
+print(testBlock.hashingValue)
 
 
