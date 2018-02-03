@@ -56,14 +56,66 @@ class blockChain {
     //blockInBlockChain is an array of object of class blockchainBlock (blockchain will have a number of blocks thus an array)
     var blockInBlockChain :[blockchainBlock] = [blockchainBlock]()
     
+    init(genesis :blockchainBlock) {
+        appendBlockToBlockChain(block: genesis)
+    }
+    
+    func appendBlockToBlockChain(block :blockchainBlock){
+        if (self.blockInBlockChain.isEmpty){
+            print("The blockchain has no blocks so we will create a gennis block now")
+            block.lastHash = "0000000000"
+            block.hash = sha256Hash(block: block)
+        }
+        self.blockInBlockChain.append(block)
+    }
+    
+    func sha256Hash(block :blockchainBlock) -> String{
+        let finalHash = block.hashingValue.sha()
+        return finalHash
+    }
 }
 
+// SHA256 Generator
+// We can use this already written function that will generate SHA256 of a given string Credit: Stackoverflow
+extension String {
+    
+    func sha() -> String {
+        
+        let task = Process()
+        task.launchPath = "/usr/bin/shasum"
+        task.arguments = []
+        
+        let inputPipe = Pipe()
+        
+        inputPipe.fileHandleForWriting.write(self.data(using: String.Encoding.utf8)!)
+        
+        inputPipe.fileHandleForWriting.closeFile()
+        
+        let outputPipe = Pipe()
+        task.standardOutput = outputPipe
+        task.standardInput = inputPipe
+        task.launch()
+        
+        let data = outputPipe.fileHandleForReading.readDataToEndOfFile()
+        let hash = String(data: data, encoding: String.Encoding.utf8)!
+        return hash.replacingOccurrences(of: "  -\n", with: "")
+    }
+}
 
 //Testing
+//First block of the blockchain is always a genesis block
+//Genesis block is just an instance of class blockchainBlock
+let genesis = blockchainBlock()
+let objBlockchain = blockChain(genesis: genesis)
 let testBlock = blockchainBlock()
 let transaction1 = transaction(amount: 100,to: "0xaqwsdjabs",from: "0sachakgldqw")
 testBlock.appendTransaction(transactionInBlock: transaction1)
 testBlock.hashingValue
 print(testBlock.hashingValue)
+
+
+
+
+
 
 
