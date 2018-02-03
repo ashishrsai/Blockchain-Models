@@ -4,7 +4,7 @@
 import Cocoa
 
 //The blockchain is going to contain a class Trasaction which we will use in each block (Each block will contain multiple or single transction)
-class transaction {
+class transaction : Codable{
     //amount: this will denote the value of trasaction (this field can potentially be used for other applications as well)
     var amount :Double
     //to: will contain the address of the reciver , this will be the public key of the reciver
@@ -33,10 +33,17 @@ class blockchainBlock {
     var nonce :Int
     //trasnctionInBlock: this is am array of tranaction in our block class (each block can contain multiple transction)
     var trasactionInBlock :[transaction] = [transaction]()
-    
     //initilaisation of the class
     init() {
         self.nonce = 0
+    }
+    
+    // we use 4 main values to calculate hash - 1. Index , 2. Hash of previous block , 3. Nonce , 4. Our transction (This has to be in String) For our blockchain we take all these valeus in String
+    var hashingValue :String{
+        let transactionInJSON = try! JSONEncoder().encode(self.trasactionInBlock)
+        let transactionInString = String(data: transactionInJSON,encoding: .utf8)
+        
+        return String(self.index) + self.lastHash + String(self.nonce) + transactionInString!
     }
     
 }
