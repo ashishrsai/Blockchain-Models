@@ -1,6 +1,6 @@
 import Cocoa
 //: Playground - noun: a place where people can play
-// Building a outline for the actul blockchain server
+// Building an outline for the actul blockchain server
 
 //The blockchain is going to contain a class Trasaction which we will use in each block (Each block will contain multiple or single transction)
 class transaction : Codable{
@@ -21,7 +21,7 @@ class transaction : Codable{
 }
 
 // this class is a block in a blockchain. Our blockchain is going to contain a number of blocks
-class blockchainBlock {
+class blockchainBlock : Codable{
     //lasthash: this field is one of the most crucial field in the block, by using the previous hash we ensure that our blockchain is consistant (This is essentially a hash pointer )
     var lastHash :String = ""
     //index: we use index in order to identify the block number (The index 0 is our gensis block)
@@ -52,7 +52,7 @@ class blockchainBlock {
 }
 
 //this class is the actual blockchain (This will consist of multiple blocks)
-class blockChain {
+class blockChain : Codable{
     //blockInBlockChain is an array of object of class blockchainBlock (blockchain will have a number of blocks thus an array)
     var blockInBlockChain :[blockchainBlock] = [blockchainBlock]()
     var difficultylevel :String!
@@ -134,5 +134,8 @@ let newBlock = objBlockchain.addNewBlock(transactionInBlock : [transactions])
 objBlockchain.appendBlockToBlockChain(block: newBlock)
 print(objBlockchain.blockInBlockChain.count)
 
+let JSONDATA = try! JSONEncoder().encode(objBlockchain)
+let blockchainJSON = String(data: JSONDATA, encoding: .utf8)
+print(blockchainJSON!)
 
 
