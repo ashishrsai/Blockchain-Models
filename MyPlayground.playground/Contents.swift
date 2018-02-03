@@ -55,9 +55,11 @@ class blockchainBlock {
 class blockChain {
     //blockInBlockChain is an array of object of class blockchainBlock (blockchain will have a number of blocks thus an array)
     var blockInBlockChain :[blockchainBlock] = [blockchainBlock]()
+    var difficultylevel :String!
     
-    init(genesis :blockchainBlock) {
-        appendBlockToBlockChain(block: genesis)
+    init(genesis :blockchainBlock,difficulty :String) {
+        self.appendBlockToBlockChain(block: genesis)
+        difficultylevel = difficulty
     }
     
     func appendBlockToBlockChain(block :blockchainBlock){
@@ -70,7 +72,13 @@ class blockChain {
     }
     
     func sha256Hash(block :blockchainBlock) -> String{
-        let finalHash = block.hashingValue.sha()
+        var finalHash = block.hashingValue.sha()
+//Proof of Work - Calculating hash with two zeros at the start
+        while(!finalHash.hasPrefix("00")){
+            block.nonce += 1
+            finalHash = block.hashingValue.sha()
+            print(finalHash)
+        }
         return finalHash
     }
 }
@@ -106,7 +114,7 @@ extension String {
 //First block of the blockchain is always a genesis block
 //Genesis block is just an instance of class blockchainBlock
 let genesis = blockchainBlock()
-let objBlockchain = blockChain(genesis: genesis)
+let objBlockchain = blockChain(genesis: genesis,difficulty: "00")
 let testBlock = blockchainBlock()
 let transaction1 = transaction(amount: 100,to: "0xaqwsdjabs",from: "0sachakgldqw")
 testBlock.appendTransaction(transactionInBlock: transaction1)
