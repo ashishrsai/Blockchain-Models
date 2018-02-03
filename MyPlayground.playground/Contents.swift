@@ -71,9 +71,10 @@ class blockChain {
         self.blockInBlockChain.append(block)
     }
     
+   
     func sha256Hash(block :blockchainBlock) -> String{
         var finalHash = block.hashingValue.sha()
-//Proof of Work - Calculating hash with two zeros at the start
+        //Proof of Work - Calculating hash with two zeros at the start
         while(!finalHash.hasPrefix("00")){
             block.nonce += 1
             finalHash = block.hashingValue.sha()
@@ -81,6 +82,19 @@ class blockChain {
         }
         return finalHash
     }
+    //this function will add a new block to the blockchain
+    func addNewBlock(transactionInBlock :[transaction]) -> blockchainBlock{
+        let tempBlock = blockchainBlock()
+        transactionInBlock.forEach { (transaction) in
+            tempBlock.appendTransaction(transactionInBlock: transaction)
+        }
+        let lastBlock = self.blockInBlockChain[self.blockInBlockChain.count - 1]
+        tempBlock.index = self.blockInBlockChain.count
+        tempBlock.lastHash = lastBlock.hash
+        tempBlock.hash = sha256Hash(block: tempBlock)
+        return tempBlock
+    }
+    
 }
 
 // SHA256 Generator
@@ -115,15 +129,10 @@ extension String {
 //Genesis block is just an instance of class blockchainBlock
 let genesis = blockchainBlock()
 let objBlockchain = blockChain(genesis: genesis,difficulty: "00")
-let testBlock = blockchainBlock()
-let transaction1 = transaction(amount: 100,to: "0xaqwsdjabs",from: "0sachakgldqw")
-testBlock.appendTransaction(transactionInBlock: transaction1)
-testBlock.hashingValue
-print(testBlock.hashingValue)
-
-
-
-
+let transactions = transaction(amount: 1000,to: "0xasbdklashg",from: "sadbjksadbcc09cs")
+let newBlock = objBlockchain.addNewBlock(transactionInBlock : [transactions])
+objBlockchain.appendBlockToBlockChain(block: newBlock)
+print(objBlockchain.blockInBlockChain.count)
 
 
 
